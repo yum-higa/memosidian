@@ -4,10 +4,65 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+ 
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  folders   Folder[]
+  files     File[]
+  tags      Tag[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  parentId  String?
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
+  children  Folder[] @relation("FolderToFolder")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  files     File[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id        String    @id @default(uuid())
+  name      String
+  content   String    @default("")
+  folderId  String?
+  folder    Folder?   @relation(fields: [folderId], references: [id])
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  fileTags  FileTag[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Tag {
+  id        String    @id @default(uuid())
+  name      String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  fileTags  FileTag[]
+  createdAt DateTime  @default(now())
+}
+
+model FileTag {
+  fileId String
+  tagId  String
+  file   File   @relation(fields: [fileId], references: [id])
+  tag    Tag    @relation(fields: [tagId], references: [id])
+
+  @@id([fileId, tagId])
 }
