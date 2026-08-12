@@ -1,6 +1,7 @@
 import Fastify, { type FastifyError } from 'fastify'
 import authRoutes from './routes/auth'
 import { verifyToken } from './middleware/auth';
+import folderRoutes from './routes/folder';
 
 const fastify = Fastify({logger: true});
 
@@ -19,7 +20,7 @@ fastify.register(authRoutes, { prefix: '/api/auth'});
 fastify.register(async (instance) => {
     instance.addHook('preHandler', verifyToken);
     await instance.register(folderRoutes, { prefix: '/folders' });
-    await instance.register(fileRoutes, { prefix: '/files' });
+//    await instance.register(fileRoutes, { prefix: '/files' });
 }, { prefix: '/api' });
 
 const start = async ()=> {
