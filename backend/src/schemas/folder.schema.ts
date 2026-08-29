@@ -3,7 +3,7 @@ const folderResponse = {
     properties: {
         id: { type: 'string' },
         name: { type: 'string' },
-        parentId: { type: 'string' },
+        parentId: { type: 'string', nullable: true },
         userId: { type: 'string' },
         createdAt: { type: 'string' },
         updatedAt: { type: 'string' },
