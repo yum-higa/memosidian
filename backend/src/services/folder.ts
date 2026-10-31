@@ -2,7 +2,7 @@ import prisma from '../lib/prisma';
 import type { Folder } from '@prisma/client';
 import { NotFound, Forbidden, InvalidFolderHierarchy } from '../errors';
 
-const getOwnedFolder = async (userId: string, id: string): Promise<Folder> => {
+export const getOwnedFolder = async (userId: string, id: string): Promise<Folder> => {
     const targetFolder = await prisma.folder.findUnique({
         where:{
             id,
