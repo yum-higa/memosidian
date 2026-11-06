@@ -8,10 +8,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
- 
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -27,7 +28,7 @@ model Folder {
   id        String   @id @default(uuid())
   name      String
   parentId  String?
-  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id], onDelete: Cascade)
   children  Folder[] @relation("FolderToFolder")
   userId    String
   user      User     @relation(fields: [userId], references: [id])
@@ -41,7 +42,7 @@ model File {
   name      String
   content   String    @default("")
   folderId  String?
-  folder    Folder?   @relation(fields: [folderId], references: [id])
+  folder    Folder?   @relation(fields: [folderId], references: [id], onDelete: Cascade)
   userId    String
   user      User      @relation(fields: [userId], references: [id])
   fileTags  FileTag[]
@@ -61,8 +62,8 @@ model Tag {
 model FileTag {
   fileId String
   tagId  String
-  file   File   @relation(fields: [fileId], references: [id])
-  tag    Tag    @relation(fields: [tagId], references: [id])
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([fileId, tagId])
 }
